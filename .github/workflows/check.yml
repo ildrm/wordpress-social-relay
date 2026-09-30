@@ -1,0 +1,27 @@
+name: Check
+on:
+  push:
+  pull_request:
+jobs:
+  php:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['8.1', '8.2', '8.3']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: openssl, mbstring, zip
+      - name: Syntax
+        run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+      - name: Focused tests
+        run: php tests/run.php
+      - name: Package
+        run: php tools/build.php
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-relay-php-${{ matrix.php }}
+          path: dist/social-relay-0.1.0.zip

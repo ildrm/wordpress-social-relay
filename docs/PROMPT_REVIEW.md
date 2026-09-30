@@ -1,0 +1,9 @@
+# Review of the supplied implementation prompt
+
+The original prompt has the right core model: source content, objectives, recipes, destination surfaces, and audiences are separate. It also correctly prioritizes security, reliability, and provider-policy compliance. Its examples prove why a product type must not be bound to one network.
+
+The main execution problem is that 137 sections and 37 simultaneous roles describe a multi-release product without identifying a minimal releasable slice. “Implement every provider” conflicts with “verify every current official API” and “never claim unverified support” when app approvals and live credentials are unavailable. A single pass cannot demonstrate production readiness from architecture or mocks alone. The prompt also asks for exactly-once-like duplicate prevention without stating how APIs lacking idempotency behave after a worker crash.
+
+Several operational semantics needed precision: which recipe wins, when two recipes count as the same publication, what is snapshotted versus live, how null fields compare in rules, what a 2xx webhook means, what happens when an import exceeds queue capacity, and how a staging clone is prevented from sending. The original UX inventory lists many screens but not the first-use path, error recovery, or the relationship between preview output and actual validation.
+
+The [optimized implementation brief](IMPLEMENTATION_BRIEF.md) resolves these by defining entities, deterministic precedence, safety gates, snapshot/live boundaries, explicit at-least-once semantics, provider evidence states, an admin information hierarchy, and acceptance demonstrations. It separates foundation, workflow depth, provider breadth, and release hardening into gates. The [implementation status](IMPLEMENTATION_STATUS.md) records actual code and unmet gates without promoting a foundation build to a production release.
