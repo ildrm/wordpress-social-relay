@@ -45,11 +45,17 @@ final class Telegram implements ProviderInterface
         $response = HttpClient::post('https://api.telegram.org/bot' . $token . '/sendMessage', ['Content-Type' => 'application/json; charset=utf-8'], $body);
         $result = HttpClient::classify($response);
         if (!$result['ok']) {
+            if ($result['retry'] && $result['code'] !== 'rate_limit') {
+                return ['ok' => false, 'code' => 'delivery_unknown', 'retry' => false, 'unknown' => true];
+            }
             return $result;
         }
         $data = json_decode(wp_remote_retrieve_body($response), true);
-        if (!is_array($data) || empty($data['ok']) || empty($data['result']['message_id'])) {
+        if (is_array($data) && ($data['ok'] ?? null) === false) {
             return ['ok' => false, 'code' => 'rejected', 'retry' => false];
+        }
+        if (!is_array($data) || ($data['ok'] ?? null) !== true || empty($data['result']['message_id'])) {
+            return ['ok' => false, 'code' => 'delivery_unknown', 'retry' => false, 'unknown' => true];
         }
         return ['ok' => true, 'remote_id' => (string) $data['result']['message_id']];
     }

@@ -67,6 +67,9 @@ final class Rules
 
     private static function value(string $field, array $content)
     {
+        if ($field === 'post_type') {
+            return $content['source_type'] ?? $content['post_type'] ?? null;
+        }
         if (str_starts_with($field, 'taxonomy:')) {
             return $content['taxonomies'][substr($field, 9)] ?? [];
         }
