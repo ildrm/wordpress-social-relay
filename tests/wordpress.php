@@ -73,6 +73,16 @@ $protected = $post_id('Password protected publication', 'test-only');
 verify(!$job($protected) && !Plugin::preview(get_post($protected))[0]['eligible'], 'password-protected posts are skipped and previewed as ineligible');
 $original = $post_id('Public post matching the real normalized type');
 verify($job($original)['status'] === 'queued' && Plugin::queue_post(get_post($original)) === 0, 'normal first-publication hook matches type and deduplicates identical content');
+$savedJob = $job($original);
+// An older recipe may already have queued the same text and destination.
+$wpdb->update($jobs, ['recipe_id' => 0], ['id' => $savedJob['id']]);
+verify(Plugin::reconcile_post(get_post($original), false) === 0, 'dry run recognizes the stored publication key across recipes');
+$wpdb->update($jobs, ['recipe_id' => $savedJob['recipe_id']], ['id' => $savedJob['id']]);
+
+remove_action('wp_after_insert_post', [Plugin::class, 'after_insert'], 20);
+$missing = $post_id('Unqueued publication');
+add_action('wp_after_insert_post', [Plugin::class, 'after_insert'], 20, 4);
+verify(Plugin::reconcile_post(get_post($missing), false) === 1 && !$job($missing), 'dry run counts a missing job without writing it');
 wp_update_post(['ID' => $original, 'post_title' => 'Edited after first publication']);
 verify(Plugin::reconcile_post(get_post($original), true) === 0, 'reconciliation preserves a previously queued snapshot');
 for ($i = 1; $i <= 103; ++$i) {
