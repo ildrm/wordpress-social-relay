@@ -35,6 +35,9 @@ final class Admin
             $class = $notice === 'saved' || $notice === 'updated' ? 'notice-success' : 'notice-error';
             echo '<div class="notice ' . esc_attr($class) . ' inline" role="status"><p>' . esc_html($messages[$notice]) . '</p></div>';
         }
+        if (get_option('social_relay_migration_error')) {
+            echo '<div class="notice notice-error inline" role="status"><p>' . esc_html__('Social Relay could not verify its database migration. Check the database permissions and indexes, then reload an admin page to retry.', 'social-relay') . '</p></div>';
+        }
         echo '<nav class="sr-nav" aria-label="' . esc_attr__('Social Relay sections', 'social-relay') . '">';
         foreach (['social-relay' => __('Overview', 'social-relay'), 'social-relay-destinations' => __('Destinations', 'social-relay'), 'social-relay-recipes' => __('Recipes', 'social-relay'), 'social-relay-jobs' => __('Publications', 'social-relay'), 'social-relay-mapping' => __('Field mapping', 'social-relay')] as $slug => $label) {
             $current = isset($_GET['page']) && sanitize_key(wp_unslash($_GET['page'])) === $slug;
@@ -76,8 +79,8 @@ final class Admin
             submit_button(__('Trust this site location', 'social-relay'), 'secondary', 'submit', false);
             echo '</form>';
         }
-        if (get_transient('social_relay_intake_capped')) {
-            echo '<p class="notice notice-warning inline" role="status">' . esc_html__('The safety limit of 100 new destination jobs per hour was reached. Additional first-publication events were skipped. Review imports and publish those items manually after the limit clears.', 'social-relay') . '</p>';
+        if (get_option('social_relay_storage_error')) {
+            echo '<p class="notice notice-warning inline" role="status">' . esc_html__('Social Relay encountered a database error. Check database health and review Publications. Use the reconciliation command to check for missing jobs after an import.', 'social-relay') . '</p>';
         }
         self::form_start('save_settings');
         echo '<label class="sr-check"><input type="checkbox" name="enabled" value="1" ' . checked(get_option('social_relay_enabled', '0'), '1', false) . '> ' . esc_html__('Enable external publishing', 'social-relay') . '</label>';
@@ -91,7 +94,7 @@ final class Admin
             $totals[$row['status']] = (int) $row['total'];
         }
         echo '<section class="sr-card"><h2>' . esc_html__('Publication activity', 'social-relay') . '</h2><div class="sr-stats">';
-        foreach (['queued' => __('Queued', 'social-relay'), 'retry_wait' => __('Retrying', 'social-relay'), 'published' => __('Accepted', 'social-relay'), 'permanent_failure' => __('Failed', 'social-relay'), 'blocked' => __('Blocked', 'social-relay')] as $key => $label) {
+        foreach (['queued' => __('Queued', 'social-relay'), 'retry_wait' => __('Retrying', 'social-relay'), 'published' => __('Accepted', 'social-relay'), 'permanent_failure' => __('Failed', 'social-relay'), 'blocked' => __('Blocked', 'social-relay'), 'delivery_unknown' => __('Needs review', 'social-relay')] as $key => $label) {
             echo '<div class="sr-stat"><strong>' . esc_html((string) ($totals[$key] ?? 0)) . '</strong><span>' . esc_html($label) . '</span></div>';
         }
         echo '</div><p><a class="button" href="' . esc_url(admin_url('admin.php?page=social-relay-jobs')) . '">' . esc_html__('Review publications', 'social-relay') . '</a></p></section>';
@@ -115,7 +118,10 @@ final class Admin
             foreach ($rows as $row) {
                 echo '<tr><th scope="row">' . esc_html($row['name']) . '</th><td>' . esc_html($row['provider']) . '</td><td>' . esc_html($row['surface']) . '</td><td>' . esc_html($row['active'] ? __('Active', 'social-relay') : __('Disabled', 'social-relay')) . '</td><td>';
                 self::form_start('toggle_connection');
-                echo '<input type="hidden" name="id" value="' . esc_attr($row['id']) . '"><button class="button button-small" type="submit">' . esc_html($row['active'] ? __('Disable', 'social-relay') : __('Enable', 'social-relay')) . '</button></form></td></tr>';
+                echo '<input type="hidden" name="id" value="' . esc_attr($row['id']) . '"><button class="button button-small" type="submit">' . esc_html($row['active'] ? __('Disable', 'social-relay') : __('Enable', 'social-relay')) . '</button></form>';
+                echo '<details><summary>' . esc_html__('Replace secret', 'social-relay') . '</summary>';
+                self::form_start('replace_secret');
+                echo '<input type="hidden" name="id" value="' . esc_attr($row['id']) . '"><label>' . esc_html__('New secret', 'social-relay') . ' <input required type="password" name="secret" autocomplete="new-password" minlength="20" maxlength="1000"></label><button class="button button-small" type="submit">' . esc_html__('Save secret', 'social-relay') . '</button></form></details></td></tr>';
             }
             echo '</tbody></table></div>';
         }
@@ -173,7 +179,7 @@ final class Admin
         self::input('name', __('Recipe name', 'social-relay'), $edit['name'] ?? '', true);
         echo '<div class="sr-grid"><p class="sr-field"><label for="sr-post-type">' . esc_html__('Post type', 'social-relay') . '</label><select name="post_type" id="sr-post-type">';
         foreach (get_post_types(['public' => true], 'objects') as $type) {
-            if ($type->name === 'attachment') {
+            if ($type->name === 'attachment' || !is_post_type_viewable($type)) {
                 continue;
             }
             echo '<option value="' . esc_attr($type->name) . '" ' . selected($edit['post_type'] ?? 'post', $type->name, false) . '>' . esc_html($type->labels->singular_name) . '</option>';
@@ -232,7 +238,12 @@ final class Admin
             foreach ($rows as $row) {
                 $editUrl = get_edit_post_link((int) $row['post_id']);
                 echo '<tr><th scope="row">' . ($editUrl ? '<a href="' . esc_url($editUrl) . '">' . esc_html(get_the_title((int) $row['post_id']) ?: '#' . $row['post_id']) . '</a>' : esc_html('#' . $row['post_id'])) . '</th><td>' . esc_html($row['destination'] ?: __('Removed destination', 'social-relay')) . '</td><td><strong>' . esc_html(str_replace('_', ' ', $row['status'])) . '</strong></td><td>' . esc_html($row['attempts']) . '</td><td>' . esc_html($row['run_at']) . '</td><td>' . esc_html($row['error_code'] ? Security::safe_error($row['error_code']) : ($row['remote_id'] ? __('Remote ID: ', 'social-relay') . $row['remote_id'] : '—')) . '</td><td>';
-                if (in_array($row['status'], ['permanent_failure', 'blocked'], true)) {
+                if ($row['status'] === 'delivery_unknown') {
+                    self::form_start('confirm_delivery');
+                    echo '<input type="hidden" name="id" value="' . esc_attr($row['id']) . '"><label>' . esc_html__('Remote ID (optional)', 'social-relay') . ' <input name="remote_id" maxlength="190"></label><button type="submit" class="button button-small">' . esc_html__('Record as delivered', 'social-relay') . '</button></form>';
+                    self::form_start('retry_unknown');
+                    echo '<input type="hidden" name="id" value="' . esc_attr($row['id']) . '"><button type="submit" class="button button-small">' . esc_html__('Retry after checking destination', 'social-relay') . '</button></form>';
+                } elseif (in_array($row['status'], ['permanent_failure', 'blocked'], true)) {
                     self::form_start('retry_job');
                     echo '<input type="hidden" name="id" value="' . esc_attr($row['id']) . '"><button type="submit" class="button button-small">' . esc_html__('Retry', 'social-relay') . '</button></form>';
                 } elseif (in_array($row['status'], ['queued', 'retry_wait'], true)) {
@@ -320,7 +331,7 @@ final class Admin
             self::trace($item['trace']);
             echo '<p><strong>' . esc_html__('Message preview', 'social-relay') . '</strong></p><pre>' . esc_html($item['text']) . '</pre></details>';
         }
-        if ($post->post_status === 'publish' && current_user_can('manage_social_relay')) {
+        if (Plugin::can_publish($post) && current_user_can('manage_social_relay')) {
             $url = wp_nonce_url(admin_url('admin-post.php?action=social_relay_queue_post&post_id=' . $post->ID), 'social_relay_queue_post_' . $post->ID);
             echo '<p><a class="button" href="' . esc_url($url) . '">' . esc_html__('Queue eligible recipes', 'social-relay') . '</a></p><p class="description">' . esc_html__('Existing identical publications are not queued again.', 'social-relay') . '</p>';
         }
@@ -351,11 +362,11 @@ final class Admin
         }
         check_admin_referer('social_relay_queue_post_' . $postId);
         $post = get_post($postId);
-        if ($post) {
-            Plugin::queue_post($post);
+        $result = $post && Plugin::can_publish($post) ? Plugin::queue_post($post) : false;
+        if ($result !== false) {
             Database::audit('manual_queue_requested', 'post', $postId);
         }
-        wp_safe_redirect(admin_url('admin.php?page=social-relay-jobs'));
+        wp_safe_redirect(add_query_arg(['page' => 'social-relay-jobs', 'sr_notice' => $result === false ? 'invalid' : 'updated'], admin_url('admin.php')));
         exit;
     }
 
@@ -408,6 +419,25 @@ final class Admin
                     $notice = 'invalid';
                 }
             }
+        } elseif ($action === 'replace_secret') {
+            $page = 'social-relay-destinations';
+            $id = absint($_POST['id'] ?? 0);
+            $secret = is_string($_POST['secret'] ?? null) ? wp_unslash($_POST['secret']) : '';
+            $table = Database::table('connections');
+            $provider = $wpdb->get_var($wpdb->prepare("SELECT provider FROM $table WHERE id = %d", $id));
+            $valid = ($provider === 'webhook' && strlen($secret) >= 20 && strlen($secret) <= 1000)
+                || ($provider === 'telegram' && strlen($secret) <= 1000 && preg_match('/^\d{5,12}:[A-Za-z0-9_-]{20,}$/D', $secret));
+            if ($valid) {
+                try {
+                    $saved = $wpdb->update($table, ['secret' => Security::encrypt($secret)], ['id' => $id, 'provider' => $provider]);
+                    if ($saved === 1) {
+                        Database::audit('connection_secret_replaced', 'connection', $id);
+                        $notice = 'saved';
+                    }
+                } catch (\RuntimeException $exception) {
+                    $notice = 'invalid';
+                }
+            }
         } elseif ($action === 'toggle_connection') {
             $page = 'social-relay-destinations';
             $id = absint($_POST['id'] ?? 0);
@@ -445,7 +475,7 @@ final class Admin
             }
             $rule = $conditions ? ['all' => $conditions] : ['field' => 'post_type', 'operator' => 'eq', 'value' => $postType];
             $count = 0;
-            if ($type && $type->public && $connection && $name !== '' && strlen($name) <= 190 && $profile !== '' && $objective !== '' && $template !== '' && strlen($template) <= 5000 && Rules::validate($rule, 0, $count)) {
+            if ($type && $type->public && $postType !== 'attachment' && is_post_type_viewable($type) && $connection && $name !== '' && strlen($name) <= 190 && $profile !== '' && $objective !== '' && $template !== '' && strlen($template) <= 5000 && Rules::validate($rule, 0, $count)) {
                 $data = ['name' => $name, 'post_type' => $postType, 'profile' => $profile, 'objective' => $objective, 'connection_id' => $connectionId, 'priority' => $priority, 'enabled' => isset($_POST['enabled']) ? 1 : 0, 'rule_json' => wp_json_encode($rule), 'template' => $template, 'updated_at' => $now];
                 $id = absint($_POST['id'] ?? 0);
                 if ($id) {
@@ -477,13 +507,18 @@ final class Admin
                 Database::audit('field_mapping_saved', 'settings', 0);
                 $notice = 'saved';
             }
-        } elseif ($action === 'retry_job' || $action === 'cancel_job') {
+        } elseif (in_array($action, ['retry_job', 'cancel_job', 'retry_unknown', 'confirm_delivery'], true)) {
             $page = 'social-relay-jobs';
             $id = absint($_POST['id'] ?? 0);
             $jobs = Database::table('jobs');
-            $allowed = $action === 'retry_job' ? "('permanent_failure','blocked')" : "('queued','retry_wait')";
-            $status = $action === 'retry_job' ? 'queued' : 'cancelled';
-            $result = $wpdb->query($wpdb->prepare("UPDATE $jobs SET status = %s, run_at = %s, error_code = '', updated_at = %s WHERE id = %d AND status IN $allowed", $status, $now, $now, $id));
+            [$allowed, $status] = match ($action) {
+                'retry_job' => ["('permanent_failure','blocked')", 'queued'],
+                'retry_unknown' => ["('delivery_unknown')", 'queued'],
+                'confirm_delivery' => ["('delivery_unknown')", 'published'],
+                'cancel_job' => ["('queued','retry_wait')", 'cancelled'],
+            };
+            $remote = $action === 'confirm_delivery' && is_string($_POST['remote_id'] ?? null) ? sanitize_text_field(wp_unslash($_POST['remote_id'])) : '';
+            $result = $wpdb->query($wpdb->prepare("UPDATE $jobs SET status = %s, run_at = %s, remote_id = %s, error_code = '', updated_at = %s WHERE id = %d AND status IN $allowed", $status, $now, $remote, $now, $id));
             if ($result === 1) {
                 Database::audit($action, 'job', $id);
                 $notice = 'updated';

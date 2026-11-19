@@ -35,6 +35,7 @@ spl_autoload_register(static function (string $class): void {
 
 register_activation_hook(__FILE__, [SocialRelay\Database::class, 'activate']);
 register_deactivation_hook(__FILE__, [SocialRelay\Database::class, 'deactivate']);
+add_filter('cron_schedules', [SocialRelay\Plugin::class, 'cron_schedules']);
 
 add_action('plugins_loaded', static function (): void {
     SocialRelay\Plugin::boot();
