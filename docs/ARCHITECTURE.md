@@ -1,21 +1,11 @@
 # Architecture
 
-```
-WP_Post → Content::normalize → Rules::evaluate → recipe/template
-        → immutable job snapshot → bounded WP-Cron worker
-        → live connection lookup → Publisher adapter → destination
-```
+- `social-relay.php` registers the loader and lifecycle hooks. `Plugin` registers ingestion, admin, and worker hooks.
+- `Content`, `Rules`, and `Template` normalize the WordPress source, evaluate versioned recipes, and render plain text.
+- `Admin` registers the screens. Classes in `src/Admin/` render the publishing workspace. `AdminActions` authorizes and handles write requests.
+- `ProviderCatalog` describes setup inputs and template defaults. `ConnectionConfig` validates them. `Publisher` dispatches by provider through `ProviderInterface`, with an extension filter for custom adapters.
+- `Database` manages site-prefixed connections, recipes, jobs, audit, and rate tables. `DeliveryWorker` claims due jobs and records their outcomes.
 
-`Content` emits a consistent content array for any public post type. WooCommerce adds commerce fields if installed. Administrators can map selected scalar post meta values to template/rule fields. The provider adapter only sees a prepared snapshot and connection; it does not depend on WordPress post type.
+The publish hook stores an immutable content snapshot for each eligible recipe and destination. The unique publication key prevents inserting the same message twice. Reconciliation also checks previously queued recipe/destination pairs for the post. The worker rechecks that the source is still public, unprotected, and included before a send. Manual WhatsApp items enter `awaiting_manual` immediately and are completed in the admin workspace.
 
-Recipes are site-local rows with a version. The admin update includes the previous version in its SQL `WHERE` clause to prevent silent concurrent overwrite. Rule trees are validated for known fields/operators and bounded to depth eight and 100 nodes. Evaluation returns the displayed trace. The current UI builds a subset of the engine's conditions; future builders can use the same evaluator.
-
-First publication is detected after post, terms, and meta have been saved. WooCommerce product intake is deferred by one minute so its commerce data can finish saving before normalization. A job snapshots source ID/type/revision, recipe ID/version, connection ID, objective/profile, title, URL, text, and rule trace. Credentials, live connection status, post published status, and exclusion are rechecked at send time. A database unique key collapses repeated first-publication events and identical effective messages to the same connection.
-
-Jobs are persisted before processing. All workers share a database delivery budget that replenishes at one attempt every 36 seconds with a burst of up to ten attempts. Each worker claims at most ten jobs with conditional SQL updates and a random lock token. A job records whether the destination supports idempotency before sending. An expired preflight lease or idempotent delivery may be retried. An expired or ambiguous Telegram delivery is held for an administrator to verify with the destination.
-
-Webhook retries use the original idempotency key. A webhook receiver must persist accepted keys before acknowledging a request. Database migration verifies each required table, column and index before advancing the schema version. Job result auditing requires a successful update of the current lease.
-
-Tables: `sr_connections`, `sr_recipes`, `sr_jobs`, `sr_audit`, each with the site prefix. `sr_jobs` indexes due-state, source, connection, creation time, and unique logical key. Schema version is stored in one option. All high-volume records remain outside `wp_options`.
-
-`ProviderInterface` and the `social_relay_providers` filter allow additional adapters. Provider capabilities and pure preview validation stay inside each adapter; the shared `HttpClient` handles WordPress HTTP calls and error classification. This is an early extension contract and is not yet a versioned SDK. `social_relay_normalized_content` can enrich normalized content.
+Automatic workers use atomic claims, renewable capacity governed by the database, time-limited leases, bounded retries, and an opt-in pause gate. Jobs reaching a rate limit honor the provider?s `Retry-After` when available. Ambiguous sends go to review unless the receiver contract makes repeating the same key safe. Instagram stores its media container in `provider_state` before attempting to publish it, so polling or an explicit recovery uses the same container. Background delivery depends on WP-Cron. A separate administrator action can request a run for due jobs.

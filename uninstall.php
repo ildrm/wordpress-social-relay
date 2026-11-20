@@ -18,6 +18,8 @@ foreach (['social_relay_schema', 'social_relay_enabled', 'social_relay_allow_sta
 }
 delete_transient('social_relay_intake_capped');
 wp_clear_scheduled_hook('social_relay_worker');
+wp_clear_scheduled_hook('social_relay_run_once');
+wp_unschedule_hook('social_relay_deferred_product');
 $role = get_role('administrator');
 if ($role) {
     $role->remove_cap('manage_social_relay');

@@ -9,6 +9,10 @@ interface ProviderInterface
     public function preview_validate(array $connection, array $snapshot): string;
     /** Empty string means compatible; otherwise a safe error code. */
     public function validate(array $connection, array $snapshot): string;
-    /** @return array{ok:bool,code?:string,retry?:bool,remote_id?:string} */
+    /**
+     * Staged providers may persist an opaque state to resume with _delivery_state.
+     *
+     * @return array{ok:bool,code?:string,retry?:bool,remote_id?:string,unknown?:bool,retry_after?:int,prepared?:bool,state?:string}
+     */
     public function send(array $connection, array $snapshot, string $idempotencyKey): array;
 }

@@ -9,13 +9,14 @@ final class DeliveryWorker
             return;
         }
         global $wpdb;
+        $deadline = microtime(true) + 20;
         $table = Database::table('jobs');
         $now = current_time('mysql', true);
         // Preflight jobs have never sent. An idempotent receiver can safely accept the same key again.
         $recovered = $wpdb->query($wpdb->prepare(
             "UPDATE $table
-             SET status = IF(dispatch_mode IN ('preflight', 'idempotent'), 'retry_wait', 'delivery_unknown'),
-                 error_code = IF(dispatch_mode IN ('preflight', 'idempotent'), '', 'delivery_unknown'),
+             SET status = IF(dispatch_mode IN ('preflight', 'prepare', 'idempotent'), 'retry_wait', 'delivery_unknown'),
+                 error_code = IF(dispatch_mode IN ('preflight', 'prepare', 'idempotent'), '', 'delivery_unknown'),
                  run_at = %s, updated_at = %s, lock_token = '', locked_until = NULL
              WHERE status = 'publishing' AND locked_until <= %s LIMIT 10",
             $now, $now, $now
@@ -30,7 +31,7 @@ final class DeliveryWorker
             return;
         }
         foreach ($ids as $id) {
-            if (!Security::can_send()) {
+            if (microtime(true) >= $deadline || !Security::can_send()) {
                 break;
             }
             $token = bin2hex(random_bytes(16));
@@ -82,11 +83,23 @@ final class DeliveryWorker
             self::finish($job, $token, 'permanent_failure', '', 'rejected');
             return true;
         }
+        $capabilities = Publisher::capabilities($connection['provider']);
+        if (!empty($capabilities['manual'])) {
+            self::finish($job, $token, 'awaiting_manual', '', '');
+            return true;
+        }
         if (!Database::reserve_delivery()) {
             self::record($job, $token, ['status' => 'retry_wait', 'run_at' => gmdate('Y-m-d H:i:s', time() + 60)]);
             return false;
         }
-        $mode = !empty(Publisher::capabilities($connection['provider'])['idempotency_key']) ? 'idempotent' : 'single';
+        $state = $job['provider_state'] ?? '';
+        $mode = !empty($capabilities['idempotency_key']) ? 'idempotent' : 'single';
+        if (!empty($capabilities['staged'])) {
+            $snapshot['_delivery_state'] = $state;
+            if ($state === '') {
+                $mode = 'prepare';
+            }
+        }
         $dispatch = $wpdb->query($wpdb->prepare(
             "UPDATE $jobs SET dispatch_mode = %s WHERE id = %d AND lock_token = %s AND locked_until > %s",
             $mode, $id, $token, current_time('mysql', true)
@@ -102,6 +115,14 @@ final class DeliveryWorker
             self::finish($job, $token, 'published', $result['remote_id'], '');
             return true;
         }
+        if (!empty($result['prepared'])) {
+            self::record($job, $token, [
+                'status' => 'retry_wait', 'provider_state' => (string) $result['state'],
+                'run_at' => gmdate('Y-m-d H:i:s', time() + (int) $result['retry_after']),
+                'error_code' => $result['code'],
+            ]);
+            return true;
+        }
         $attempts = (int) $job['attempts'] + 1;
         if (!empty($result['unknown'])) {
             self::finish($job, $token, 'delivery_unknown', '', 'delivery_unknown', $attempts);
@@ -109,6 +130,10 @@ final class DeliveryWorker
         }
         if ($result['retry'] && $attempts < 5) {
             $delay = min(3600, (int) (60 * (2 ** ($attempts - 1)))) + random_int(0, 30);
+            if ($result['code'] === 'media_processing') {
+                $delay = 60;
+            }
+            $delay = max($delay, (int) ($result['retry_after'] ?? 0));
             if (self::record($job, $token, [
                 'status' => 'retry_wait', 'attempts' => $attempts,
                 'run_at' => gmdate('Y-m-d H:i:s', time() + $delay),
@@ -125,6 +150,9 @@ final class DeliveryWorker
     private static function finish(array $job, string $token, string $status, string $remoteId, string $error, ?int $attempts = null): void
     {
         $data = ['status' => $status, 'remote_id' => $remoteId, 'error_code' => $error];
+        if (!in_array($status, ['retry_wait', 'delivery_unknown', 'blocked'], true)) {
+            $data['provider_state'] = '';
+        }
         if ($attempts !== null) {
             $data['attempts'] = $attempts;
         } elseif ($status === 'published') {

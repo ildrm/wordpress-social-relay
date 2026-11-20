@@ -1,5 +1,7 @@
 # Implementation report — 2026-10-01
 
+This report records the 0.1.0 foundation. See the [latest release guide](../README.md) for the current scope.
+
 ## Architecture and implemented features
 
 Social Relay 0.1.0 is a foundation build. A generic source adapter normalizes public WordPress posts and custom post types. WooCommerce product fields are added when WooCommerce is active. A bounded rule engine produces an execution trace; versioned recipes select one destination and a message template. The first publication creates an immutable per-destination job, and WP-Cron sends it through a provider adapter. Jobs use unique logical keys, conditional claims, a recovery lease, bounded retries, and a paginated history screen. The admin UI includes setup, safety controls, destinations, recipes, field mapping, publication status, and a post preview/exclusion box.

@@ -1,0 +1,967 @@
+# Persian translations for Social Relay.
+msgid ""
+msgstr ""
+"Project-Id-Version: Social Relay\n"
+"Language: fa_IR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+
+msgid " (complete)"
+msgstr " (انجام شد)"
+
+msgid " (opens in a new tab)"
+msgstr " (در زبانهٔ تازه باز می‌شود)"
+
+msgid " (pending)"
+msgstr " (در انتظار انجام)"
+
+#, php-format
+msgid "%s publication"
+msgid_plural "%s publications"
+msgstr[0] "%s انتشار"
+msgstr[1] "%s انتشار"
+
+msgid "A label you will recognize when setting up recipes."
+msgstr "نامی انتخاب کنید که هنگام ساخت دستور انتشار آن را به‌راحتی پیدا کنید."
+
+msgid "Account handle or DID"
+msgstr "نام کاربری یا DID حساب"
+
+msgid "Account label"
+msgstr "نام حساب"
+
+msgid "Actions"
+msgstr "عملیات"
+
+msgid "Active"
+msgstr "فعال"
+
+msgid "Active destinations"
+msgstr "مقصدهای فعال"
+
+msgid "Add a mapping"
+msgstr "افزودن نگاشت"
+
+msgid "Add a mapping to make a custom field available in a recipe."
+msgstr "برای استفاده از یک فیلد سفارشی در دستور انتشار، نگاشت آن را اضافه کنید."
+
+msgid "Add destination"
+msgstr "افزودن مقصد"
+
+msgid "Advanced recipe settings"
+msgstr "تنظیمات پیشرفتهٔ دستور انتشار"
+
+msgid "Advanced rule JSON"
+msgstr "قاعدهٔ پیشرفته با JSON"
+
+msgid "After saving, open a WordPress post and find the Social Relay panel. It shows the rendered message, whether conditions match, and any issues to fix."
+msgstr "پس از ذخیره، نوشته‌ای را در وردپرس باز کنید و به پنل انتشار اجتماعی بروید. در این پنل متن نهایی، نتیجهٔ بررسی شرط‌ها و موارد نیازمند اصلاح را می‌بینید."
+
+msgid "All destinations"
+msgstr "همهٔ مقصدها"
+
+msgid "All statuses"
+msgstr "همهٔ وضعیت‌ها"
+
+msgid "Allow sending from non-production sites"
+msgstr "اجازهٔ ارسال از محیط‌های آزمایشی و توسعه"
+
+msgid "Apply filters"
+msgstr "اعمال فیلترها"
+
+msgid "At least"
+msgstr "بزرگ‌تر یا مساوی"
+
+msgid "At most"
+msgstr "کوچک‌تر یا مساوی"
+
+msgid "Attempts"
+msgstr "تعداد تلاش‌ها"
+
+msgid "Author URN"
+msgstr "شناسهٔ URN نویسنده"
+
+msgid "Automatic publishing paused"
+msgstr "انتشار خودکار متوقف است"
+
+msgid "Awaiting manual publication"
+msgstr "در انتظار انتشار دستی"
+
+msgid "Back to network catalog"
+msgstr "بازگشت به فهرست شبکه‌ها"
+
+msgid "Back to publications"
+msgstr "بازگشت به انتشارها"
+
+msgid "Back to recipes"
+msgstr "بازگشت به دستورهای انتشار"
+
+msgid "Before connecting"
+msgstr "پیش از اتصال"
+
+msgid "Blocked"
+msgstr "مسدود"
+
+msgid "Blog identifier"
+msgstr "شناسهٔ وبلاگ"
+
+msgid "Bluesky app password"
+msgstr "رمز برنامهٔ Bluesky"
+
+msgid "Board ID"
+msgstr "شناسهٔ بُرد"
+
+msgid "Bot token"
+msgstr "توکن ربات"
+
+msgid "Both conditions must match when supplied. Leave the conditions empty to match every published item of the selected post type."
+msgstr "اگر هر دو شرط را وارد کنید، نوشته باید هر دو را برآورده کند. برای انتشار همهٔ موارد منتشرشده از نوع انتخابی، شرط‌ها را خالی بگذارید."
+
+msgid "Browse networks"
+msgstr "مرور شبکه‌ها"
+
+msgid "Cancel"
+msgstr "انصراف"
+
+msgid "Cancel job"
+msgstr "لغو انتشار"
+
+msgid "Cancelled"
+msgstr "لغوشده"
+
+msgid "Changes could not be saved. Check the form and try again."
+msgstr "تغییرات ذخیره نشد. مقادیر فرم را بررسی و دوباره تلاش کنید."
+
+msgid "Changes saved."
+msgstr "تغییرات ذخیره شد."
+
+msgid "Channel or group ID"
+msgstr "شناسهٔ کانال یا گروه"
+
+msgid "Choose a network"
+msgstr "انتخاب شبکه"
+
+msgid "Choose a network and add credentials."
+msgstr "شبکه‌ای را انتخاب و اطلاعات دسترسی آن را وارد کنید."
+
+msgid "Choose a network to connect your first publication destination."
+msgstr "شبکه‌ای را برای اتصال نخستین مقصد انتشار انتخاب کنید."
+
+msgid "Choose the content, destination, and message."
+msgstr "محتوا، مقصد و پیام را تعیین کنید."
+
+msgid "Choose which posts to share, where they go, and what each message says."
+msgstr "تعیین کنید کدام نوشته‌ها، در کدام مقصد و با چه پیامی منتشر شوند."
+
+msgid "Clear filters"
+msgstr "پاک‌کردن فیلترها"
+
+msgid "Condition details"
+msgstr "جزئیات شرط‌ها"
+
+msgid "Conditions match"
+msgstr "مطابق با شرط‌ها"
+
+#, php-format
+msgid "Connect %s"
+msgstr "اتصال به %s"
+
+msgid "Connect a destination"
+msgstr "اتصال یک مقصد"
+
+msgid "Connect a destination and create a recipe. Eligible posts can queue while publishing is paused."
+msgstr "مقصدی را متصل کنید و یک دستور انتشار بسازید. نوشته‌های واجد شرایط در زمان توقف انتشار هم به صف اضافه می‌شوند."
+
+msgid "Connect a destination first"
+msgstr "ابتدا یک مقصد متصل کنید"
+
+msgid "Connect the accounts, channels, and boards where your recipes publish."
+msgstr "حساب‌ها، کانال‌ها و بُردهایی را وصل کنید که دستورهای انتشار به آن‌ها ارسال می‌شوند."
+
+#, php-format
+msgid "Connected (%s)"
+msgstr "متصل‌شده‌ها (%s)"
+
+msgid "Connected destinations"
+msgstr "مقصدهای متصل"
+
+msgid "Contains"
+msgstr "شامل"
+
+msgid "Content profile"
+msgstr "نمایهٔ محتوا"
+
+msgid "Copy message"
+msgstr "کپی پیام"
+
+msgid "Copy the message, open the channel as an administrator, and publish the update. Return here to record that it was published."
+msgstr "پیام را کپی کنید، کانال را با دسترسی مدیر باز کنید و پیام را منتشر کنید. سپس به این صفحه برگردید و انتشار را ثبت کنید."
+
+msgid "Copy the token from BotFather."
+msgstr "توکن را از BotFather کپی کنید."
+
+msgid "Create a dedicated app password in Bluesky settings."
+msgstr "در تنظیمات Bluesky یک رمز برنامهٔ اختصاصی بسازید."
+
+msgid "Create a recipe"
+msgstr "ساخت دستور انتشار"
+
+msgid "Create an image Pin with a link to your post."
+msgstr "یک پین تصویری با پیوند به نوشتهٔ وردپرس ایجاد کنید."
+
+msgid "Create recipe"
+msgstr "ساخت دستور انتشار"
+
+msgid "Create your first recipe"
+msgstr "نخستین دستور انتشار را بسازید"
+
+msgid "Delete this site’s destinations, recipes, and history when the plugin is uninstalled. Published posts stay on their networks."
+msgstr "با حذف افزونه، مقصدها، دستورها و تاریخچهٔ انتشار این سایت حذف می‌شوند. پست‌هایی که قبلاً منتشر شده‌اند در شبکه‌هایشان باقی می‌مانند."
+
+msgid "Deliver signed JSON to an HTTPS receiver."
+msgstr "دادهٔ JSON امضاشده را به یک گیرندهٔ HTTPS بفرستید."
+
+msgid "Destination"
+msgstr "مقصد"
+
+msgid "Destination name"
+msgstr "نام مقصد"
+
+msgid "Destination unavailable"
+msgstr "مقصد در دسترس نیست"
+
+msgid "Destination views"
+msgstr "نمای مقصدها"
+
+msgid "Destinations"
+msgstr "مقصدها"
+
+msgid "Disable destination"
+msgstr "غیرفعال‌کردن مقصد"
+
+msgid "Disabled"
+msgstr "غیرفعال"
+
+msgid "Edit recipe"
+msgstr "ویرایش دستور انتشار"
+
+msgid "Eligible"
+msgstr "آمادهٔ انتشار"
+
+msgid "Eligible to run after"
+msgstr "زمان شروع پردازش"
+
+msgid "Enable destination"
+msgstr "فعال‌کردن مقصد"
+
+msgid "Enable external publishing"
+msgstr "فعال‌کردن انتشار در شبکه‌ها"
+
+msgid "Enable outbound delivery for staging, local, and development environments."
+msgstr "ارسال از محیط‌های آزمایشی، محلی و توسعه را فعال کنید."
+
+msgid "Enable publishing"
+msgstr "فعال‌کردن انتشار"
+
+msgid "Enable this recipe"
+msgstr "فعال‌کردن این دستور انتشار"
+
+msgid "Enabled"
+msgstr "فعال"
+
+msgid "Enabled recipes send eligible WordPress posts to their destinations on first publication."
+msgstr "دستورهای فعال، نوشته‌های واجد شرایط وردپرس را هنگام نخستین انتشار به مقصدهایشان می‌فرستند."
+
+msgid "Enter the account or handle for your reference."
+msgstr "نام حساب یا نام کاربری را برای شناسایی آن وارد کنید."
+
+msgid "Enter the subreddit name without r/. Check its rules and posting requirements."
+msgstr "نام ساب‌ردیت را بدون پیشوند r/ وارد کنید. قوانین و شرایط انتشار آن را بررسی کنید."
+
+msgid "Enter your handle without @, or your account DID."
+msgstr "نام کاربری خود را بدون @ وارد کنید یا شناسهٔ DID را بنویسید."
+
+msgid "Equals"
+msgstr "برابر با"
+
+msgid "Evaluate new posts of the selected type on first publication."
+msgstr "نوشته‌های جدید از نوع انتخابی در نخستین انتشار بررسی می‌شوند."
+
+msgid "Every minute"
+msgstr "هر دقیقه"
+
+msgid "Every recipe needs a destination for its messages."
+msgstr "هر دستور انتشار برای ارسال پیام به یک مقصد نیاز دارد."
+
+msgid "Exclude this post from Social Relay"
+msgstr "این نوشته از انتشار اجتماعی مستثنا شود"
+
+msgid "Existing identical publications stay in the history without creating duplicates."
+msgstr "انتشارهای یکسان در تاریخچه باقی می‌مانند و دوباره به صف اضافه نمی‌شوند."
+
+msgid "Fail"
+msgstr "ناموفق"
+
+msgid "Failed"
+msgstr "ناموفق"
+
+msgid "Featured image required"
+msgstr "نیازمند تصویر شاخص"
+
+msgid "Field condition"
+msgstr "شرط فیلد"
+
+msgid "Field mapping"
+msgstr "نگاشت فیلدها"
+
+msgid "Field mapping removed."
+msgstr "نگاشت فیلد حذف شد."
+
+msgid "Field value"
+msgstr "مقدار فیلد"
+
+msgid "Filter networks"
+msgstr "فیلتر شبکه‌ها"
+
+msgid "Filter publications"
+msgstr "فیلتر انتشارها"
+
+msgid "Filter which posts qualify"
+msgstr "تعیین شرط‌های انتشار نوشته"
+
+msgid "Find a network"
+msgstr "جست‌وجوی شبکه"
+
+msgid "Follow each WordPress post from the queue to its destination."
+msgstr "مسیر هر نوشتهٔ وردپرس را از صف تا مقصد دنبال کنید."
+
+msgid "Greater than"
+msgstr "بزرگ‌تر از"
+
+msgid "Has a value"
+msgstr "دارای مقدار"
+
+msgid "HMAC secret"
+msgstr "کلید محرمانهٔ HMAC"
+
+msgid "In queue"
+msgstr "در صف"
+
+msgid "Insert a message variable"
+msgstr "درج متغیر پیام"
+
+msgid "Instagram access token"
+msgstr "توکن دسترسی Instagram"
+
+msgid "Instagram account ID"
+msgstr "شناسهٔ حساب Instagram"
+
+msgid "Instance URL"
+msgstr "نشانی سرور"
+
+#, php-format
+msgid "Job #%s"
+msgstr "وظیفهٔ انتشار شمارهٔ %s"
+
+msgid "Last updated"
+msgstr "آخرین به‌روزرسانی"
+
+msgid "Leave blank for bsky.social. For self-hosted accounts, enter the root HTTPS URL of your PDS."
+msgstr "برای bsky.social این فیلد را خالی بگذارید. اگر سرور شخصی دارید، نشانی پایهٔ HTTPS آن را وارد کنید."
+
+msgid "Leave this empty for “Has a value”."
+msgstr "برای گزینهٔ «دارای مقدار»، این فیلد را خالی بگذارید."
+
+msgid "Less than"
+msgstr "کوچک‌تر از"
+
+msgid "LinkedIn access token"
+msgstr "توکن دسترسی LinkedIn"
+
+msgid "Manage"
+msgstr "مدیریت"
+
+msgid "Manage where WordPress content goes and track each publication."
+msgstr "مقصدهای انتشار محتوای وردپرس را مدیریت و وضعیت هر انتشار را پیگیری کنید."
+
+msgid "Manual publication"
+msgstr "انتشار دستی"
+
+msgid "Manual publication recorded."
+msgstr "انتشار دستی ثبت شد."
+
+msgid "Mapped field name"
+msgstr "نام فیلد نگاشت‌شده"
+
+msgid "Mapped fields"
+msgstr "فیلدهای نگاشت‌شده"
+
+msgid "Mapped fields table"
+msgstr "جدول فیلدهای نگاشت‌شده"
+
+msgid "Mark as published"
+msgstr "ثبت به‌عنوان منتشرشده"
+
+msgid "Mastodon access token"
+msgstr "توکن دسترسی Mastodon"
+
+msgid "Message copied."
+msgstr "پیام کپی شد."
+
+msgid "Message preview"
+msgstr "پیش‌نمایش پیام"
+
+msgid "Message template"
+msgstr "قالب پیام"
+
+msgid "Message variables"
+msgstr "متغیرهای پیام"
+
+msgid "Meta key"
+msgstr "کلید متا"
+
+msgid "Missing destination"
+msgstr "مقصد یافت نشد"
+
+msgid "Needs attention"
+msgstr "نیازمند رسیدگی"
+
+msgid "Needs review"
+msgstr "نیازمند بررسی"
+
+msgid "Network catalog"
+msgstr "فهرست شبکه‌ها"
+
+msgid "New posts can go out automatically."
+msgstr "نوشته‌های تازه می‌توانند خودکار منتشر شوند."
+
+msgid "Next"
+msgstr "بعدی"
+
+msgid "No destinations connected"
+msgstr "مقصدی متصل نشده است"
+
+msgid "No fields mapped yet"
+msgstr "هنوز فیلدی نگاشت نشده است"
+
+msgid "No matching networks."
+msgstr "شبکه‌ای پیدا نشد."
+
+msgid "No matching publications"
+msgstr "انتشاری با این فیلترها پیدا نشد"
+
+msgid "No publications yet"
+msgstr "هنوز انتشاری ثبت نشده است"
+
+msgid "Not eligible"
+msgstr "واجد شرایط نیست"
+
+msgid "Objective"
+msgstr "هدف"
+
+msgid "Open channel"
+msgstr "بازکردن کانال"
+
+msgid "Open field mapping"
+msgstr "بازکردن نگاشت فیلدها"
+
+msgid "Open network documentation"
+msgstr "بازکردن مستندات شبکه"
+
+msgid "Open the channel and publish the prepared message in WhatsApp."
+msgstr "کانال را باز کنید و متن آماده را در واتس‌اپ منتشر کنید."
+
+msgid "Open WordPress post"
+msgstr "بازکردن نوشتهٔ وردپرس"
+
+msgid "Overview"
+msgstr "نمای کلی"
+
+msgid "Page access token"
+msgstr "توکن دسترسی صفحه"
+
+msgid "Page ID"
+msgstr "شناسهٔ صفحه"
+
+msgid "Pass"
+msgstr "موفق"
+
+msgid "Paste your channel link, such as https://whatsapp.com/channel/…"
+msgstr "پیوند کانال را وارد کنید. نمونهٔ ساختار پیوند: ‎https://whatsapp.com/channel/…‎"
+
+msgid "Personal data server URL (optional)"
+msgstr "نشانی سرور دادهٔ شخصی (اختیاری)"
+
+msgid "Pinterest access token"
+msgstr "توکن دسترسی Pinterest"
+
+#, php-format
+msgid "Post #%s"
+msgstr "نوشتهٔ شمارهٔ %s"
+
+msgid "Post type"
+msgstr "نوع نوشته"
+
+msgid "Prepare a channel update to post and confirm manually."
+msgstr "پیام کانال را آماده کنید و پس از انتشار دستی، آن را تأیید کنید."
+
+msgid "Prepared message"
+msgstr "پیام آمادهٔ انتشار"
+
+msgid "Preview a post first, then turn on delivery."
+msgstr "پیش‌نمایش یک نوشته را بررسی کنید و سپس انتشار را فعال کنید."
+
+msgid "Preview before publishing"
+msgstr "پیش‌نمایش پیش از انتشار"
+
+msgid "Previous"
+msgstr "قبلی"
+
+msgid "Priority"
+msgstr "اولویت"
+
+msgid "Process due jobs"
+msgstr "پردازش صف آمادهٔ ارسال"
+
+#, php-format
+msgid "Publication #%s"
+msgstr "انتشار شمارهٔ %s"
+
+msgid "Publication failed. Review the destination configuration."
+msgstr "انتشار ناموفق بود. تنظیمات مقصد را بررسی کنید."
+
+msgid "Publication history"
+msgstr "تاریخچهٔ انتشار"
+
+msgid "Publication history table"
+msgstr "جدول تاریخچهٔ انتشار"
+
+msgid "Publication not found"
+msgstr "انتشار پیدا نشد"
+
+msgid "Publication updated."
+msgstr "وضعیت انتشار به‌روزرسانی شد."
+
+msgid "Publications"
+msgstr "انتشارها"
+
+msgid "Publish a post to a Facebook Page."
+msgstr "نوشته را در یک صفحهٔ فیس‌بوک منتشر کنید."
+
+msgid "Publish a public status on your Mastodon server."
+msgstr "یک وضعیت عمومی در سرور Mastodon منتشر کنید."
+
+msgid "Publish a short post on X."
+msgstr "یک پست کوتاه در X منتشر کنید."
+
+msgid "Publish a text post with a link block on a Tumblr blog."
+msgstr "یک پست متنی همراه با پیوند در وبلاگ Tumblr منتشر کنید."
+
+msgid "Publish short posts with clickable links."
+msgstr "پست‌های کوتاه با پیوندهای قابل کلیک منتشر کنید."
+
+msgid "Publish the featured image and a caption to a professional account."
+msgstr "تصویر شاخص و شرح آن را در یک حساب حرفه‌ای منتشر کنید."
+
+msgid "Publish to WhatsApp Channel"
+msgstr "انتشار در کانال واتس‌اپ"
+
+msgid "Published"
+msgstr "منتشرشده"
+
+msgid "Published update link or ID (optional)"
+msgstr "پیوند یا شناسهٔ پیام منتشرشده (اختیاری)"
+
+msgid "Publishing checklist"
+msgstr "مراحل راه‌اندازی انتشار"
+
+msgid "Publishing enabled"
+msgstr "انتشار فعال است"
+
+msgid "Publishing is paused. Enable it in Overview before running the queue."
+msgstr "انتشار متوقف است. پیش از پردازش صف، انتشار را از نمای کلی فعال کنید."
+
+msgid "Publishing metrics"
+msgstr "آمار انتشار"
+
+msgid "Publishing paused"
+msgstr "انتشار متوقف است"
+
+msgid "Publishing settings"
+msgstr "تنظیمات انتشار"
+
+msgid "Queue eligible recipes"
+msgstr "افزودن انتشارهای واجد شرایط به صف"
+
+msgid "Queue processing was requested. Refresh to see updated statuses."
+msgstr "درخواست پردازش صف ثبت شد. برای دیدن وضعیت تازه، صفحه را به‌روزرسانی کنید."
+
+msgid "Queued"
+msgstr "در صف"
+
+msgid "Receiver label"
+msgstr "نام گیرنده"
+
+msgid "Receiver URL"
+msgstr "نشانی گیرنده"
+
+msgid "Recent publications"
+msgstr "انتشارهای اخیر"
+
+msgid "Recipe"
+msgstr "دستور انتشار"
+
+msgid "Recipe name"
+msgstr "نام دستور انتشار"
+
+msgid "Recipes"
+msgstr "دستورهای انتشار"
+
+msgid "Recipes table"
+msgstr "جدول دستورهای انتشار"
+
+msgid "Recipes with higher priority are evaluated first."
+msgstr "دستورهایی که اولویت بیشتری دارند زودتر ارزیابی می‌شوند."
+
+msgid "Record as delivered"
+msgstr "ثبت به‌عنوان ارسال‌شده"
+
+msgid "Reddit access token"
+msgstr "توکن دسترسی Reddit"
+
+msgid "Remote ID"
+msgstr "شناسه در مقصد"
+
+msgid "Remote ID (optional)"
+msgstr "شناسه در مقصد (اختیاری)"
+
+msgid "Remove"
+msgstr "حذف"
+
+msgid "Remove local Social Relay data on uninstall"
+msgstr "حذف داده‌های محلی انتشار اجتماعی هنگام حذف افزونه"
+
+msgid "Replace credential"
+msgstr "جایگزینی اطلاعات دسترسی"
+
+msgid "Required term slug"
+msgstr "نامک عبارت لازم"
+
+msgid "Results pages"
+msgstr "صفحه‌های نتایج"
+
+msgid "Retry after checking destination"
+msgstr "تلاش دوباره پس از بررسی مقصد"
+
+msgid "Retry publication"
+msgstr "تلاش مجدد برای انتشار"
+
+msgid "Rule JSON"
+msgstr "کد JSON قاعده"
+
+msgid "Save destination"
+msgstr "ذخیرهٔ مقصد"
+
+msgid "Save mapping"
+msgstr "ذخیرهٔ نگاشت"
+
+msgid "Save recipe"
+msgstr "ذخیرهٔ دستور انتشار"
+
+msgid "Save settings"
+msgstr "ذخیرهٔ تنظیمات"
+
+msgid "Save this post as a draft to refresh the preview."
+msgstr "برای به‌روزرسانی پیش‌نمایش، این نوشته را به‌عنوان پیش‌نویس ذخیره کنید."
+
+msgid "Select a network to see its connection requirements."
+msgstr "شبکه‌ای را انتخاب کنید تا پیش‌نیازهای اتصال آن را ببینید."
+
+msgid "Select the message and copy it manually."
+msgstr "پیام را انتخاب و به‌صورت دستی کپی کنید."
+
+msgid "Send queued and future jobs when recipes match."
+msgstr "با برقرار بودن شرط‌های دستور، انتشارهای موجود در صف و انتشارهای آینده ارسال می‌شوند."
+
+msgid "Send text and links to a channel or group through your bot."
+msgstr "متن و پیوند را با ربات به کانال یا گروه بفرستید."
+
+msgid "Sending"
+msgstr "در حال ارسال"
+
+msgid "Set up your publishing workflow."
+msgstr "گردش کار انتشار را راه‌اندازی کنید."
+
+msgid "Share a post as a member or organization."
+msgstr "از حساب شخصی یا سازمانی پست منتشر کنید."
+
+msgid "Share a short text post on Threads."
+msgstr "یک پست متنی کوتاه در Threads منتشر کنید."
+
+msgid "Signed webhook"
+msgstr "وب‌هوک امضاشده"
+
+msgid "Social Relay"
+msgstr "انتشار اجتماعی"
+
+msgid "Social Relay could not verify its database migration. Check database permissions and indexes, then reload an admin page."
+msgstr "افزونه نتوانست به‌روزرسانی ساختار پایگاه داده را تأیید کند. سطح دسترسی و ایندکس‌های پایگاه داده را بررسی و سپس صفحهٔ مدیریت را دوباره بارگذاری کنید."
+
+msgid "Social Relay encountered a database error. Check the database and review recent publications."
+msgstr "افزونه با خطایی در پایگاه داده روبه‌رو شد. پایگاه داده و انتشارهای اخیر را بررسی کنید."
+
+msgid "Social Relay prepares a channel update. A channel administrator copies the message, publishes it in WhatsApp, and records the publication here."
+msgstr "افزونه متن پیام کانال را آماده می‌کند. مدیر کانال متن را کپی و در واتس‌اپ منتشر می‌کند و سپس انتشار را در اینجا ثبت می‌کند."
+
+msgid "Social Relay sections"
+msgstr "بخش‌های انتشار اجتماعی"
+
+msgid "Start with a lowercase letter. Use lowercase letters, numbers, or underscores. Saving the same name for this post type replaces its mapping."
+msgstr "نام را با حرف کوچک لاتین شروع کنید و فقط از حروف کوچک، عدد و زیرخط استفاده کنید. ذخیرهٔ نام تکراری برای همان نوع نوشته، نگاشت قبلی را جایگزین می‌کند."
+
+msgid "Start with a post type and a connected destination. Add conditions when you need more control."
+msgstr "از یک نوع نوشته و یک مقصد متصل شروع کنید. هر زمان به کنترل بیشتری نیاز داشتید، شرط اضافه کنید."
+
+msgid "Status"
+msgstr "وضعیت"
+
+msgid "Submit a link post to a subreddit that permits it."
+msgstr "یک پست پیوندی به ساب‌ردیتی بفرستید که این نوع انتشار را می‌پذیرد."
+
+msgid "Subreddit"
+msgstr "ساب‌ردیت"
+
+msgid "Taxonomy slug"
+msgstr "نامک طبقه‌بندی"
+
+msgid "Template variable"
+msgstr "متغیر قالب"
+
+msgid "Template variable name"
+msgstr "نام متغیر قالب"
+
+msgid "The connection is missing or disabled."
+msgstr "اتصال مقصد وجود ندارد یا غیرفعال است."
+
+msgid "The connection secret could not be read. Replace it on the destination."
+msgstr "خواندن اطلاعات محرمانهٔ اتصال ممکن نبود. آن را در مقصد جایگزین کنید."
+
+msgid "The destination could not be reached. It will be retried."
+msgstr "دسترسی به مقصد ممکن نبود. ارسال دوباره امتحان می‌شود."
+
+msgid "The destination is temporarily unavailable. It will be retried."
+msgstr "مقصد موقتاً در دسترس نیست. ارسال دوباره امتحان می‌شود."
+
+msgid "The destination may have accepted the message. Check the destination before retrying."
+msgstr "ممکن است مقصد پیام را پذیرفته باشد. پیش از تلاش دوباره، مقصد را بررسی کنید."
+
+msgid "The destination rejected the publication. Check the connection and payload."
+msgstr "مقصد انتشار را نپذیرفت. اتصال و محتوای ارسالی را بررسی کنید."
+
+msgid "The destination requested a slower rate. It will be retried."
+msgstr "مقصد درخواست کاهش سرعت ارسال کرد. ارسال دوباره امتحان می‌شود."
+
+msgid "The destination URL is unsafe or unavailable."
+msgstr "نشانی مقصد ناامن است یا در دسترس نیست."
+
+msgid "The first publication for an enabled recipe will appear here."
+msgstr "نخستین انتشار برای یک دستور فعال در اینجا نمایش داده می‌شود."
+
+msgid "The message exceeds this provider’s text limit. Shorten the recipe template."
+msgstr "پیام از سقف طول متن این شبکه بیشتر است. قالب پیام را کوتاه‌تر کنید."
+
+msgid "The message template rendered empty."
+msgstr "قالب پیام متن قابل ارسال تولید نکرد."
+
+msgid "The numeric ID of a Page you can publish to."
+msgstr "شناسهٔ عددی صفحه‌ای را وارد کنید که اجازهٔ انتشار در آن را دارید."
+
+msgid "The post or destination is unavailable for manual publication."
+msgstr "نوشته یا مقصد برای انتشار دستی در دسترس نیست."
+
+msgid "The provider could not process the image. Check its format, dimensions and public accessibility."
+msgstr "شبکه نتوانست تصویر را پردازش کند. قالب، ابعاد و دسترسی عمومی آن را بررسی کنید."
+
+msgid "The provider is preparing the image. Check again after the next attempt."
+msgstr "شبکه در حال آماده‌سازی تصویر است. پس از تلاش بعدی دوباره بررسی کنید."
+
+msgid "The provider rejected the credentials. Check the token, its permissions and expiration."
+msgstr "شبکه اطلاعات دسترسی را نپذیرفت. توکن، مجوزها و تاریخ انقضای آن را بررسی کنید."
+
+msgid "The provider requires a single-line title. Try the {title} token on its own."
+msgstr "این شبکه به عنوانی تک‌خطی نیاز دارد. از متغیر {title} به‌تنهایی استفاده کنید."
+
+msgid "The requested job is unavailable."
+msgstr "وظیفهٔ انتشار درخواستی در دسترس نیست."
+
+msgid "The selected recipe could not be found."
+msgstr "دستور انتشار انتخابی پیدا نشد."
+
+msgid "The site URL changed. Trust this location before resuming external publication."
+msgstr "نشانی سایت تغییر کرده است. پیش از ازسرگیری انتشار، نشانی جدید را تأیید کنید."
+
+msgid "There are no enabled recipes for this post type."
+msgstr "برای این نوع نوشته هیچ دستور انتشار فعالی وجود ندارد."
+
+msgid "There are no new eligible publications for this post."
+msgstr "برای این نوشته انتشار واجد شرایط تازه‌ای وجود ندارد."
+
+msgid "This destination needs a featured image with a public HTTPS URL."
+msgstr "این مقصد به تصویر شاخص با نشانی عمومی HTTPS نیاز دارد."
+
+msgid "This destination needs a supported featured image format."
+msgstr "این مقصد به تصویر شاخص با قالب پشتیبانی‌شده نیاز دارد."
+
+msgid "This destination needs a valid post permalink."
+msgstr "این مقصد به پیوند یکتای معتبر نوشته نیاز دارد."
+
+msgid "This post is excluded."
+msgstr "این نوشته از انتشار مستثنا شده است."
+
+msgid "This recipe was edited in another session. Review the latest values before saving again."
+msgstr "این دستور انتشار در جلسهٔ دیگری ویرایش شده است. پیش از ذخیرهٔ دوباره، آخرین تغییرات را بررسی کنید."
+
+msgid "Threads access token"
+msgstr "توکن دسترسی Threads"
+
+msgid "Threads user ID"
+msgstr "شناسهٔ کاربر Threads"
+
+msgid "Trust this site location"
+msgstr "تأیید نشانی این سایت"
+
+msgid "Try a different status or destination."
+msgstr "وضعیت یا مقصد دیگری را امتحان کنید."
+
+msgid "Tumblr access token"
+msgstr "توکن دسترسی Tumblr"
+
+msgid "Unavailable"
+msgstr "در دسترس نیست"
+
+msgid "Unavailable destination"
+msgstr "مقصد در دسترس نیست"
+
+msgid "Use a member token with w_member_social or w_organization_social and the required Page role."
+msgstr "از توکن کاربر دارای مجوز w_member_social استفاده کنید. برای انتشار سازمانی، توکن باید مجوز w_organization_social و نقش لازم در صفحه را داشته باشد."
+
+msgid "Use a negative chat ID or a public @channel. Give your bot posting permissions."
+msgstr "شناسهٔ منفی گفتگو یا نام عمومی کانال با پیشوند @ را وارد کنید. مجوز انتشار را به ربات بدهید."
+
+msgid "Use a Page token with pages_manage_posts and pages_read_engagement."
+msgstr "از توکن صفحه با مجوزهای pages_manage_posts و pages_read_engagement استفاده کنید."
+
+msgid "Use a Pinterest API user token with pins:write."
+msgstr "از توکن کاربر Pinterest API با مجوز pins:write استفاده کنید."
+
+msgid "Use a public HTTPS endpoint. Redirects are disabled."
+msgstr "یک نشانی عمومی HTTPS وارد کنید. تغییر مسیر دنبال نمی‌شود."
+
+msgid "Use a secret of at least 20 characters shared with the receiver."
+msgstr "از کلید محرمانه‌ای با حداقل ۲۰ نویسه استفاده کنید که با گیرنده مشترک باشد."
+
+msgid "Use a short label that identifies this receiver."
+msgstr "نام کوتاهی برای شناسایی گیرنده وارد کنید."
+
+msgid "Use a Threads user token with threads_basic and threads_content_publish."
+msgstr "از توکن کاربر Threads با مجوزهای threads_basic و threads_content_publish استفاده کنید."
+
+msgid "Use a Tumblr OAuth 2.0 token with write access."
+msgstr "از توکن OAuth 2.0 وبلاگ Tumblr با مجوز نوشتن استفاده کنید."
+
+msgid "Use a user token with write:statuses on this instance."
+msgstr "برای همین سرور از توکن کاربر با مجوز write:statuses استفاده کنید."
+
+msgid "Use an approved Reddit API application and a user token with the submit scope."
+msgstr "از برنامهٔ تأییدشدهٔ Reddit API و توکن کاربر با مجوز submit استفاده کنید."
+
+msgid "Use an Instagram Login token with instagram_business_basic and instagram_business_content_publishing."
+msgstr "از توکن Instagram Login با مجوزهای instagram_business_basic و instagram_business_content_publishing استفاده کنید."
+
+msgid "Use an OAuth 2.0 user-context token with tweet.read, tweet.write and users.read."
+msgstr "از توکن کاربر OAuth 2.0 با مجوزهای tweet.read، tweet.write و users.read استفاده کنید."
+
+msgid "Use credentials that can publish to the selected account. Credentials are encrypted and can be replaced after setup."
+msgstr "اطلاعات دسترسی را با مجوز انتشار در حساب انتخابی وارد کنید. این اطلاعات رمزگذاری می‌شود و پس از راه‌اندازی قابل جایگزینی است."
+
+msgid "Use destination’s starter template"
+msgstr "استفاده از قالب اولیهٔ مقصد"
+
+msgid "Use the blog name, its host name, or its t: UUID."
+msgstr "نام وبلاگ، نام میزبان یا شناسهٔ UUID با پیشوند t: را وارد کنید."
+
+msgid "Use the numeric ID of a board this account can publish to."
+msgstr "شناسهٔ عددی بُردی را وارد کنید که این حساب می‌تواند در آن منتشر کند."
+
+msgid "Use the numeric professional account ID from Instagram Login."
+msgstr "شناسهٔ عددی حساب حرفه‌ای را از Instagram Login وارد کنید."
+
+msgid "Use the numeric user ID from the Threads API."
+msgstr "شناسهٔ عددی کاربر را از Threads API وارد کنید."
+
+msgid "Use the root HTTPS URL, such as https://mastodon.social."
+msgstr "نشانی پایهٔ HTTPS سرور را وارد کنید. برای نمونه، ‎https://mastodon.social‎"
+
+msgid "Use urn:li:person:… or urn:li:organization:…"
+msgstr "از شناسهٔ ‎urn:li:person:…‎ یا ‎urn:li:organization:…‎ استفاده کنید."
+
+msgid "Use values from WordPress custom fields in recipes and messages."
+msgstr "از مقادیر فیلدهای سفارشی وردپرس در دستورهای انتشار و پیام‌ها استفاده کنید."
+
+msgid "Use variables such as {title} and {url} to pull values from each post. Custom fields become available through Field mapping."
+msgstr "متغیرهایی مانند {title} و {url} مقدار را از نوشته می‌خوانند. فیلدهای سفارشی از طریق بخش نگاشت فیلدها در دسترس قرار می‌گیرند."
+
+msgid "Variables are filled from the WordPress post when the job is created."
+msgstr "هنگام افزودن وظیفه به صف انتشار، متغیرها با مقادیر نوشتهٔ وردپرس پر می‌شوند."
+
+msgid "View all"
+msgstr "مشاهدهٔ همه"
+
+msgid "View queued message"
+msgstr "مشاهدهٔ پیام در صف"
+
+msgid "Waiting to retry"
+msgstr "در انتظار تلاش دوباره"
+
+msgid "WhatsApp Channel"
+msgstr "کانال واتس‌اپ"
+
+msgid "WhatsApp channel link"
+msgstr "پیوند کانال واتس‌اپ"
+
+msgid "When a post matches an enabled recipe, its destination job appears here."
+msgstr "وقتی نوشته‌ای با یک دستور فعال مطابقت داشته باشد، وظیفهٔ انتشار آن در این بخش ظاهر می‌شود."
+
+msgid "When supplied, this rule takes precedence over the filters above. Combine conditions with all, any, or not."
+msgstr "با واردکردن این قاعده، شرط‌های بالا جای خود را به آن می‌دهند. برای ترکیب شرط‌ها از all، any یا not استفاده کنید."
+
+#, php-format
+msgid "WordPress environment: %s."
+msgstr "محیط وردپرس: %s"
+
+msgid "WordPress meta key or ACF field name"
+msgstr "کلید متای وردپرس یا نام فیلد ACF"
+
+msgid "WordPress post"
+msgstr "نوشتهٔ وردپرس"
+
+msgid "WordPress posts sent here need a publicly reachable featured image."
+msgstr "انتشار در این مقصد به یک تصویر شاخص با دسترسی عمومی نیاز دارد."
+
+msgid "X user access token"
+msgstr "توکن دسترسی کاربر X"
+
+msgid "You cannot manage Social Relay."
+msgstr "شما مجوز مدیریت افزونهٔ انتشار اجتماعی را ندارید."
+
+msgid "You cannot queue this post."
+msgstr "شما مجوز افزودن این نوشته به صف را ندارید."
+
+msgid "Your activity starts here"
+msgstr "انتشارهای شما در اینجا نمایش داده می‌شوند"
+
+msgid "Your recipes"
+msgstr "دستورهای انتشار شما"
+

@@ -13,20 +13,23 @@ final class Plugin
     {
         add_action('wp_after_insert_post', [self::class, 'after_insert'], 20, 4);
         add_action('social_relay_worker', [self::class, 'work']);
+        add_action('social_relay_run_once', [self::class, 'work']);
         add_action('social_relay_deferred_product', [self::class, 'deferred_product']);
-        add_action('admin_menu', [Admin::class, 'menu']);
-        add_action('admin_post_social_relay_action', [Admin::class, 'handle']);
-        add_action('admin_post_social_relay_queue_post', [Admin::class, 'manual_queue']);
-        add_action('add_meta_boxes', [Admin::class, 'meta_boxes']);
-        add_action('save_post', [Admin::class, 'save_post_exclusion']);
+        add_action('save_post', [AdminActions::class, 'save_post_exclusion']);
+        if (is_admin()) {
+            add_action('admin_menu', [Admin::class, 'menu']);
+            add_action('admin_post_social_relay_action', [AdminActions::class, 'handle']);
+            add_action('admin_post_social_relay_queue_post', [AdminActions::class, 'manual_queue']);
+            add_action('add_meta_boxes', [Admin::class, 'meta_boxes']);
+            add_action('admin_init', static function (): void {
+                if (!Database::ready()) {
+                    Database::activate();
+                }
+            });
+        }
         if (defined('WP_CLI') && WP_CLI) {
             \WP_CLI::add_command('social-relay', Cli::class);
         }
-        add_action('admin_init', static function (): void {
-            if (!Database::ready()) {
-                Database::activate();
-            }
-        });
         add_action('init', static function (): void {
             if (!wp_next_scheduled('social_relay_worker')) {
                 wp_schedule_event(time() + 60, 'social_relay_minute', 'social_relay_worker');
@@ -45,19 +48,19 @@ final class Plugin
         if ($post->post_type === 'product' && function_exists('wc_get_product')) {
             if (!wp_next_scheduled('social_relay_deferred_product', [$postId])) {
                 if (!wp_schedule_single_event(time() + 60, 'social_relay_deferred_product', [$postId])) {
-                    self::queue_post($post);
+                    self::reconcile_post($post, true);
                 }
             }
             return;
         }
-        self::queue_post($post);
+        self::reconcile_post($post, true);
     }
 
     public static function deferred_product(int $postId): void
     {
         $post = get_post($postId);
         if ($post) {
-            self::queue_post($post);
+            self::reconcile_post($post, true);
         }
     }
 
@@ -122,19 +125,32 @@ final class Plugin
             $trace = Rules::evaluate($rule, $content);
             $text = Template::render($recipe['template'], $content);
             $connection = $connections[(int) $recipe['connection_id']] ?? null;
-            $compatibility = $connection && $connection['active'] ? Publisher::compatible($connection, ['text' => $text]) : ['compatible' => false, 'reason' => 'connection'];
+            $compatibility = $connection && $connection['active']
+                ? Publisher::compatible($connection, self::message($content, $text))
+                : ['compatible' => false, 'reason' => 'connection'];
             $out[] = [
                 'recipe' => $recipe,
                 'connection' => $connection,
                 'content' => $content,
                 'trace' => $trace,
                 'eligible' => $publishable && $trace['pass'] && $text !== '' && $compatibility['compatible'],
+                'matches' => $trace['pass'] && $text !== '' && $compatibility['compatible'],
                 'compatibility' => $compatibility,
                 'excluded' => $excluded,
                 'text' => $text,
             ];
         }
         return $out;
+    }
+
+    private static function message(array $content, string $text): array
+    {
+        return [
+            'title' => $content['title'], 'url' => $content['url'], 'text' => $text,
+            'featured_image' => $content['featured_image'] ?? '',
+            'featured_image_mime' => $content['featured_image_mime'] ?? '',
+            'featured_image_alt' => $content['featured_image_alt'] ?? '',
+        ];
     }
 
     /**
@@ -207,20 +223,18 @@ final class Plugin
                 'connection_id' => (int) $recipe['connection_id'],
                 'profile' => $content['profile'],
                 'objective' => $recipe['objective'],
-                'title' => $content['title'],
-                'url' => $content['url'],
-                'text' => $item['text'],
                 'trace' => $item['trace'],
-            ];
+            ] + self::message($content, $item['text']);
+            $status = !empty(Publisher::capabilities($connection['provider'])['manual']) ? 'awaiting_manual' : 'queued';
             $json = wp_json_encode($snapshot);
             $result = $json === false ? false : $wpdb->query($wpdb->prepare(
                 "INSERT INTO $jobs (idem_key, post_id, recipe_id, connection_id, status, run_at, snapshot, created_at, updated_at)
-                 VALUES (%s, %d, %d, %d, 'queued', %s, %s, %s, %s) ON DUPLICATE KEY UPDATE id = id",
-                $key, $post->ID, $recipe['id'], $recipe['connection_id'], $now, $json, $now, $now
+                 VALUES (%s, %d, %d, %d, %s, %s, %s, %s, %s) ON DUPLICATE KEY UPDATE id = id",
+                $key, $post->ID, $recipe['id'], $recipe['connection_id'], $status, $now, $json, $now, $now
             ));
             if ($result === 1) {
                 ++$count;
-                Database::audit('job_queued', 'job', (int) $wpdb->insert_id);
+                Database::audit('job_' . $status, 'job', (int) $wpdb->insert_id);
             } elseif ($result === false) {
                 $failed = true;
             }

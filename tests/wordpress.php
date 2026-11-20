@@ -34,17 +34,18 @@ Database::activate();
 verify(Database::ready(), 'schema and all indexes verified on activation');
 verify((int) $wpdb->get_var("SELECT COUNT(*) FROM $jobs") === 0, 'fixture has an empty queue');
 $wpdb->query("ALTER TABLE $jobs DROP INDEX expired_jobs");
-update_option('social_relay_schema', 2);
+$wpdb->query("ALTER TABLE $jobs DROP COLUMN provider_state");
+update_option('social_relay_schema', 3);
 $stopMigration = static fn(array $queries): array => array_map(
-    static fn(string $sql): string => str_replace("            KEY expired_jobs (status,locked_until,id),\n", '', $sql),
+    static fn(string $sql): string => preg_replace('/^[ \t]*KEY expired_jobs \(status,locked_until,id\),\r?\n/m', '', $sql),
     $queries
 );
 add_filter('dbdelta_queries', $stopMigration);
 Database::activate();
-verify(!Database::ready() && (int) get_option('social_relay_schema') === 2 && get_option('social_relay_migration_error') === '1', 'an incomplete migration retains its prior version');
+verify(!Database::ready() && (int) get_option('social_relay_schema') === 3 && get_option('social_relay_migration_error') === '1', 'an incomplete migration retains its prior version');
 remove_filter('dbdelta_queries', $stopMigration);
 Database::activate();
-verify(Database::ready(), 'a subsequent migration restores the missing index');
+verify(Database::ready() && $wpdb->get_var("SHOW COLUMNS FROM $jobs LIKE 'provider_state'") === 'provider_state', 'a subsequent migration restores the missing index and staged delivery column');
 
 $token = '123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZabcd';
 $wrapped = Security::encrypt($token);
@@ -140,4 +141,78 @@ verify((int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $audit WHERE ob
 $wpdb->update($jobs, ['locked_until' => '2000-01-01 00:00:00'], ['id' => $id]);
 Plugin::work();
 verify($calls === 2 && $job($accepted)['status'] === 'delivery_unknown', 'expired Telegram lease is quarantined without resending');
+
+$recipes = Database::table('recipes');
+$wpdb->update($recipes, ['enabled' => 0], ['connection_id' => $connection]);
+$add_destination = static function (string $provider, string $surface, string $secret) use ($wpdb, $connections, $recipes, $now): int {
+    $wpdb->insert($connections, [
+        'name' => $provider, 'provider' => $provider, 'surface' => $surface, 'endpoint' => '',
+        'secret' => $secret, 'active' => 1, 'created_at' => $now,
+    ]);
+    $id = (int) $wpdb->insert_id;
+    $wpdb->insert($recipes, [
+        'name' => $provider, 'post_type' => 'post', 'connection_id' => $id,
+        'rule_json' => wp_json_encode(['field' => 'post_type', 'operator' => 'eq', 'value' => 'post']),
+        'template' => "{title}\n{url}", 'created_at' => $now, 'updated_at' => $now,
+    ]);
+    return $id;
+};
+$manual = $add_destination('whatsapp', 'https://whatsapp.com/channel/0029VaRelayTest123', '');
+$instagram = $add_destination('instagram', '123456', Security::encrypt('instagram-fixture-token'));
+$find = static fn(int $post, int $destination): array => $wpdb->get_row($wpdb->prepare(
+    "SELECT * FROM $jobs WHERE post_id = %d AND connection_id = %d", $post, $destination
+), ARRAY_A) ?: [];
+
+$media = wp_insert_attachment(['post_title' => 'Featured image', 'post_mime_type' => 'image/jpeg'], 'relay-featured.jpg');
+update_post_meta($media, '_wp_attachment_image_alt', 'A photograph from the fixture');
+add_filter('wp_get_attachment_url', static fn($url, $id) => (int) $id === $media ? 'https://site.example/relay-featured.jpg' : $url, 10, 2);
+
+update_option('social_relay_enabled', '0');
+$noImage = $post_id('Article without a featured image');
+verify($find($noImage, $manual)['status'] === 'awaiting_manual', 'WhatsApp creates a reviewable job while automatic publishing is paused');
+verify(!$find($noImage, $instagram), 'Instagram first publication requires an eligible featured image');
+$post = wp_insert_post(['post_title' => 'Scheduled feature', 'post_status' => 'future', 'post_date' => '2099-01-02 00:00:00',
+    'meta_input' => ['_thumbnail_id' => $media]]);
+verify(!$find($post, $instagram), 'future posts do not queue before publication');
+wp_publish_post($post);
+$photo = $find($post, $instagram);
+$snapshot = json_decode($photo['snapshot'] ?? '', true);
+verify(($photo['status'] ?? '') === 'queued' && $snapshot['featured_image_mime'] === 'image/jpeg'
+    && $snapshot['featured_image_alt'] === 'A photograph from the fixture', 'scheduled publication snapshots the featured image and alt text');
+wp_update_post(['ID' => $post, 'post_status' => 'draft', 'post_title' => 'Edited feature']);
+wp_publish_post($post);
+verify($wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $jobs WHERE post_id = %d", $post)) === '2', 're-publishing does not recreate existing first-publication jobs');
+
+$graph = [];
+$stage = 'IN_PROGRESS';
+add_filter('pre_http_request', static function ($pre, $args, $url) use (&$graph, &$stage) {
+    if (!str_starts_with($url, 'https://graph.instagram.com/')) {
+        return $pre;
+    }
+    $graph[] = [$args['method'], $url];
+    $body = match (true) {
+        str_ends_with($url, '/media') => ['id' => '777'],
+        str_ends_with($url, '/777?fields=status_code') => ['status_code' => $stage],
+        str_ends_with($url, '/media_publish') => ['id' => '778'],
+        default => [],
+    };
+    return ['response' => ['code' => 200, 'message' => 'OK'], 'body' => wp_json_encode($body), 'headers' => []];
+}, 20, 3);
+update_option('social_relay_enabled', '1');
+$wpdb->update($rate, ['next_slot' => 0], ['id' => 1]);
+$due($post);
+Plugin::work();
+$prepared = $find($post, $instagram);
+verify($prepared['status'] === 'retry_wait' && $prepared['provider_state'] === '777' && (int) $prepared['attempts'] === 0
+    && count($graph) === 1, 'Instagram persists its container before dispatching a publication');
+$due($post);
+Plugin::work();
+verify($find($post, $instagram)['provider_state'] === '777' && count($graph) === 2, 'polling a preparing Instagram image does not create a new container');
+$stage = 'FINISHED';
+$due($post);
+Plugin::work();
+$published = $find($post, $instagram);
+verify($published['status'] === 'published' && $published['remote_id'] === '778' && $published['provider_state'] === ''
+    && count($graph) === 4, 'Instagram publishes the persisted container and stores the final receipt');
+verify($find($post, $manual)['status'] === 'awaiting_manual', 'the automatic worker leaves the WhatsApp action for the operator');
 echo "WordPress and MariaDB integration checks passed.\n";

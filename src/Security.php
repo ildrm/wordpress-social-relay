@@ -19,6 +19,12 @@ final class Security
 
     public static function validate_endpoint(string $url): bool
     {
+        return self::public_https_url($url) && wp_http_validate_url($url) !== false;
+    }
+
+    /** A structural check suitable for previews, without DNS queries. */
+    public static function public_https_url(string $url): bool
+    {
         $parts = wp_parse_url($url);
         if (!is_array($parts) || ($parts['scheme'] ?? '') !== 'https' || empty($parts['host']) || isset($parts['user']) || isset($parts['pass']) || isset($parts['fragment'])) {
             return false;
@@ -27,7 +33,7 @@ final class Security
         if (filter_var($host, FILTER_VALIDATE_IP) || !preg_match('/^[a-z0-9.-]+$/iD', $host) || !str_contains($host, '.') || preg_match('/(?:^|\.)(?:localhost|local|internal|test|invalid)$/iD', $host)) {
             return false;
         }
-        return wp_http_validate_url($url) !== false;
+        return true;
     }
 
     private static function key(string $version): string
@@ -96,6 +102,16 @@ final class Security
             'rejected' => __('The destination rejected the publication. Check the connection and payload.', 'social-relay'),
             'connection' => __('The connection is missing or disabled.', 'social-relay'),
             'secret' => __('The connection secret could not be read. Replace it on the destination.', 'social-relay'),
+            'authentication' => __('The provider rejected the credentials. Check the token, its permissions and expiration.', 'social-relay'),
+            'message_empty' => __('The message template rendered empty.', 'social-relay'),
+            'message_too_long' => __('The message exceeds this provider’s text limit. Shorten the recipe template.', 'social-relay'),
+            'image_required' => __('This destination needs a featured image with a public HTTPS URL.', 'social-relay'),
+            'image_format' => __('This destination needs a supported featured image format.', 'social-relay'),
+            'source_url' => __('This destination needs a valid post permalink.', 'social-relay'),
+            'single_line_required' => __('The provider requires a single-line title. Try the {title} token on its own.', 'social-relay'),
+            'media_processing' => __('The provider is preparing the image. Check again after the next attempt.', 'social-relay'),
+            'media_failed' => __('The provider could not process the image. Check its format, dimensions and public accessibility.', 'social-relay'),
+            'manual_required' => __('Open the channel and publish the prepared message in WhatsApp.', 'social-relay'),
             'delivery_unknown' => __('The destination may have accepted the message. Check the destination before retrying.', 'social-relay'),
         ];
         return $messages[$code] ?? __('Publication failed. Review the destination configuration.', 'social-relay');

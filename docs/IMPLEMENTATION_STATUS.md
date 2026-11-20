@@ -1,5 +1,7 @@
 # Implementation status — 2026-10-01
 
+This document records the 0.1.0 foundation. See the [latest release guide](../README.md) for the current scope.
+
 This document distinguishes implemented paths from the larger attached product vision. Syntax and focused tests alone do not establish production readiness.
 
 ## Implemented

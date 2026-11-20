@@ -16,12 +16,16 @@ jobs:
           extensions: openssl, mbstring, zip
       - name: Syntax
         run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+      - name: Admin JavaScript syntax
+        run: node --check assets/admin.js
       - name: Focused tests
         run: php tests/run.php
       - name: Package
-        run: php tools/build.php
+        id: package
+        run: echo "archive=$(php tools/build.php)" >> "$GITHUB_OUTPUT"
       - name: Upload package
         uses: actions/upload-artifact@v4
         with:
           name: social-relay-php-${{ matrix.php }}
-          path: dist/social-relay-0.1.0.zip
+          path: ${{ steps.package.outputs.archive }}
+          if-no-files-found: error

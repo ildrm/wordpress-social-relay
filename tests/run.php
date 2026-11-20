@@ -16,24 +16,32 @@ function wp_http_validate_url(string $url) {
 }
 function wp_json_encode($value, int $options = 0): string { return json_encode($value, $options | JSON_THROW_ON_ERROR); }
 function wp_safe_remote_post(string $url, array $args) {
-    $GLOBALS['last_request'] = ['url' => $url, 'args' => $args];
-    return $GLOBALS['mock_response'];
+    return mock_request('POST', $url, $args);
+}
+function wp_safe_remote_get(string $url, array $args) {
+    return mock_request('GET', $url, $args);
+}
+function mock_request(string $method, string $url, array $args) {
+    $GLOBALS['last_request'] = ['method' => $method, 'url' => $url, 'args' => $args];
+    $GLOBALS['requests'][] = $GLOBALS['last_request'];
+    return !empty($GLOBALS['mock_responses']) ? array_shift($GLOBALS['mock_responses']) : $GLOBALS['mock_response'];
 }
 function is_wp_error($value): bool { return $value instanceof MockError; }
 function wp_remote_retrieve_response_code(array $response): int { return $response['status']; }
-function wp_remote_retrieve_body(array $response): string { return $response['body'] ?? ''; }
-function wp_remote_retrieve_header(array $response, string $header): string { return $response['headers'][$header] ?? ''; }
+function wp_remote_retrieve_body($response): string { return is_array($response) ? ($response['body'] ?? '') : ''; }
+function wp_remote_retrieve_header($response, string $header): string { return is_array($response) ? ($response['headers'][$header] ?? '') : ''; }
 class MockError {}
+function get_transient(string $key) { return $GLOBALS['transients'][$key] ?? false; }
+function set_transient(string $key, string $value, int $duration): void { $GLOBALS['transients'][$key] = $value; }
+function delete_transient(string $key): void { unset($GLOBALS['transients'][$key]); }
+function plugin_dir_path(string $file): string { return dirname($file) . '/'; }
+function register_activation_hook(...$args): void {}
+function register_deactivation_hook(...$args): void {}
+function add_filter(...$args): void {}
+function add_action(...$args): void {}
+function apply_filters(string $hook, $value, ...$args) { return $value; }
 
-require_once __DIR__ . '/../src/Rules.php';
-require_once __DIR__ . '/../src/Template.php';
-require_once __DIR__ . '/../src/Security.php';
-require_once __DIR__ . '/../src/ProviderInterface.php';
-require_once __DIR__ . '/../src/HttpClient.php';
-require_once __DIR__ . '/../src/Providers/Webhook.php';
-require_once __DIR__ . '/../src/Providers/Telegram.php';
-require_once __DIR__ . '/../src/Publisher.php';
-require_once __DIR__ . '/../src/PublicationKey.php';
+require_once __DIR__ . '/../social-relay.php';
 
 function check(bool $condition, string $message): void {
     if (!$condition) { throw new RuntimeException($message); }
@@ -103,4 +111,5 @@ check(SocialRelay\Publisher::send($telegram, $snapshot, 'key')['remote_id'] === 
 check(SocialRelay\Publisher::capabilities('telegram')['max_characters'] === 4096, 'Telegram capability is exposed to validation and UI');
 $long = $snapshot; $long['text'] = str_repeat('a', 4097);
 check(!SocialRelay\Publisher::compatible($telegram, $long)['compatible'], 'Telegram over-limit text is rejected at preview');
+require __DIR__ . '/providers.php';
 echo "All focused tests passed.\n";

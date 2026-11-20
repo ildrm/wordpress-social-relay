@@ -12,6 +12,7 @@ final class Content
         if ($excerpt === '') {
             $excerpt = wp_trim_words($body, 35, '…');
         }
+        $imageId = get_post_thumbnail_id($post);
         $content = [
             'source_id' => (int) $post->ID,
             'source_type' => $post->post_type,
@@ -25,6 +26,8 @@ final class Content
             'date' => $post->post_date_gmt,
             'locale' => get_locale(),
             'featured_image' => get_the_post_thumbnail_url($post, 'full') ?: '',
+            'featured_image_mime' => $imageId ? (get_post_mime_type($imageId) ?: '') : '',
+            'featured_image_alt' => $imageId ? (string) get_post_meta($imageId, '_wp_attachment_image_alt', true) : '',
             'taxonomies' => [],
             'fields' => [],
         ];

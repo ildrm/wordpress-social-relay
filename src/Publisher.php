@@ -6,9 +6,21 @@ final class Publisher
     /** @return array<string,ProviderInterface> */
     private static function providers(): array
     {
-        $providers = [
+        static $builtins;
+        $providers = $builtins ??= [
             'webhook' => new Providers\Webhook(),
             'telegram' => new Providers\Telegram(),
+            'facebook' => new Providers\Facebook(),
+            'instagram' => new Providers\Instagram(),
+            'whatsapp' => new Providers\WhatsApp(),
+            'linkedin' => new Providers\LinkedIn(),
+            'threads' => new Providers\Threads(),
+            'mastodon' => new Providers\Mastodon(),
+            'bluesky' => new Providers\Bluesky(),
+            'pinterest' => new Providers\Pinterest(),
+            'x' => new Providers\X(),
+            'tumblr' => new Providers\Tumblr(),
+            'reddit' => new Providers\Reddit(),
         ];
         if (function_exists('apply_filters')) {
             $providers = apply_filters('social_relay_providers', $providers);

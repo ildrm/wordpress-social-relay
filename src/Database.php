@@ -3,7 +3,7 @@ namespace SocialRelay;
 
 final class Database
 {
-    public const SCHEMA_VERSION = 3;
+    public const SCHEMA_VERSION = 4;
 
     public static function ready(): bool
     {
@@ -75,6 +75,7 @@ final class Database
             lock_token char(32) NOT NULL DEFAULT '',
             locked_until datetime DEFAULT NULL,
             dispatch_mode varchar(12) NOT NULL DEFAULT '',
+            provider_state varchar(190) NOT NULL DEFAULT '',
             snapshot longtext NOT NULL,
             remote_id varchar(190) NOT NULL DEFAULT '',
             error_code varchar(40) NOT NULL DEFAULT '',
@@ -108,7 +109,7 @@ final class Database
         $tables = [
             $connections => ['id name provider surface endpoint secret active created_at', ['primary' => 'id', 'provider_active' => 'provider active']],
             $recipes => ['id name post_type profile objective connection_id priority enabled version rule_json template created_at updated_at', ['primary' => 'id', 'type_enabled' => 'post_type enabled priority', 'connection_id' => 'connection_id']],
-            $jobs => ['id idem_key post_id recipe_id connection_id status attempts run_at lock_token locked_until dispatch_mode snapshot remote_id error_code created_at updated_at', ['primary' => 'id', 'idem_key' => 'idem_key', 'due_jobs' => 'status run_at id', 'expired_jobs' => 'status locked_until id', 'created_at' => 'created_at', 'post_id' => 'post_id id', 'connection_id' => 'connection_id status']],
+            $jobs => ['id idem_key post_id recipe_id connection_id status attempts run_at lock_token locked_until dispatch_mode provider_state snapshot remote_id error_code created_at updated_at', ['primary' => 'id', 'idem_key' => 'idem_key', 'due_jobs' => 'status run_at id', 'expired_jobs' => 'status locked_until id', 'created_at' => 'created_at', 'post_id' => 'post_id id', 'connection_id' => 'connection_id status']],
             $audit => ['id actor_id action object_type object_id result created_at', ['primary' => 'id', 'created_at' => 'created_at', 'object_ref' => 'object_type object_id']],
             $rate => ['id next_slot', ['primary' => 'id']],
         ];
@@ -183,6 +184,8 @@ final class Database
     public static function deactivate(): void
     {
         wp_clear_scheduled_hook('social_relay_worker');
+        wp_clear_scheduled_hook('social_relay_run_once');
+        wp_unschedule_hook('social_relay_deferred_product');
     }
 
     public static function audit(string $action, string $type, int $id, string $result = 'ok'): void

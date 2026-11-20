@@ -94,6 +94,9 @@ final class Cli
             }
             foreach ($rows as $row) {
                 $cursor = (int) $row['id'];
+                if ($row['secret'] === '') {
+                    continue;
+                }
                 try {
                     $secret = Security::decrypt($row['secret']);
                     if (str_starts_with($row['secret'], $active . ':')) {
